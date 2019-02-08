@@ -1,7 +1,26 @@
 const express = require('express')
-const app = express()
 const bodyParser = require('body-parser')
+const morgan = require('morgan')
+const app = express()
+
+/* Morgan configuration */
+morgan.token('body', (req, res) => {
+  return JSON.stringify(req.body)
+})
+
+/* Middleware */
 app.use(bodyParser.json())
+app.use(morgan(
+  [
+    ':method',
+    ':url',
+    ':status',
+    ':res[content-length]',
+    '-',
+    ':response-time ms',
+    ':body'
+  ].join(' ')
+))
 
 /* Raw data */
 let persons = [
@@ -77,7 +96,7 @@ app.post('/api/persons', (req, res) => {
   if (persons.some(p => p.name === body.name)) errors.push('samanniminen henkilö on jo puhelinluettelossa!')
   if (newId === -1) errors.push('puhelinluettelo on täynnä!')
 
-  if (errors)
+  if (errors.length > 0)
     return res.status(400).json({ errors: errors })
 
   const newPerson = {
