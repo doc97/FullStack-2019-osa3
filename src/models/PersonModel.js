@@ -4,8 +4,14 @@ mongoose.set('useFindAndModify', false)
 
 const preparePersonModel = () => {
   const schema = new mongoose.Schema({
-    name: String,
-    number: String
+    name: {
+      type: String,
+      required: true
+    },
+    number: {
+      type: String,
+      required: true
+    }
   })
   schema.set('toJSON', {
     transform: (document, returnedObject) => {

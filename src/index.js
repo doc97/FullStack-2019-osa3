@@ -62,12 +62,6 @@ app.get('/api/persons/:id', (req, res, next) => {
 app.post('/api/persons', (req, res) => {
   const body = req.body
 
-  let errors = [] 
-  if (body.name === undefined) errors.push('name-kenttä puuttuu')
-  if (body.number === undefined) errors.push('number-kenttä puuttuu')
-  if (errors.length > 0)
-    return res.status(400).json({ errors: errors })
-
   PersonModel
     .findOne({ name: body.name })
     .then(result => {
@@ -81,9 +75,11 @@ app.post('/api/persons', (req, res) => {
           number: body.number
         })
 
-        newPerson.save().then(savedPerson => {
-          res.json(savedPerson.toJSON())
-        })
+        newPerson
+          .save()
+          .then(savedPerson => savedPerson.toJSON())
+          .then(jsonPerson => res.json(jsonPerson))
+          .catch(err => next(err))
       }
     })
 })
@@ -120,6 +116,8 @@ const errorHandler = (err, req, res, next) => {
 
   if (err.name === 'CastError' && err.kind == 'ObjectId') {
     return res.status(400).send({ error: 'malformed id' })
+  } else if (err.name === 'ValidationError') {
+    return res.status(400).json({ error: err.message })
   }
 
   next(err)
