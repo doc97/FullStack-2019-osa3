@@ -105,7 +105,7 @@ const unknownEndpoint = (req, res) => {
 }
 
 const errorHandler = (err, req, res, next) => {
-  console.log(err)
+  console.log(err.message)
 
   if (err.name === 'CastError' && err.kind == 'ObjectId') {
     return res.status(400).send({ error: 'malformed id' })
