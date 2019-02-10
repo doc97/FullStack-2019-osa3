@@ -1,0 +1,1 @@
+DELETE https://fullstack-2019-osa3.herokuapp.com/api/persons/5c5ebe871fb7f24919c24e66

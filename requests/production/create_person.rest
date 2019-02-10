@@ -1,0 +1,7 @@
+POST https://fullstack-2019-osa3.herokuapp.com/api/persons
+Content-Type: application/json
+
+{
+  "name": "Arto Hellasvuo",
+  "number": "045-1236543"
+}
