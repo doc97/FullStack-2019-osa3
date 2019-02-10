@@ -2,16 +2,19 @@ const mongoose = require('mongoose')
 const validator = require('mongoose-unique-validator')
 
 mongoose.set('useFindAndModify', false)
+mongoose.set('useCreateIndex', true)
 
 const preparePersonModel = () => {
   const schema = new mongoose.Schema({
     name: {
       type: String,
+      minlength: 3,
       required: true,
       unique: true
     },
     number: {
       type: String,
+      minlength: 8,
       required: true
     }
   })
