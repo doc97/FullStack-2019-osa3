@@ -62,39 +62,29 @@ app.get('/api/persons/:id', (req, res, next) => {
     .catch(err => next(err))
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
   const body = req.body
 
-  PersonModel
-    .findOne({ name: body.name })
-    .then(result => {
-      if (result !== null) {
-        console.log(result)
-        const error = { errorMsg: 'samanniminen henkilö on jo puhelinluettelossa!' }
-        return res.status(400).json(error)
-      } else {
-        const newPerson = new PersonModel({
-          name: body.name,
-          number: body.number
-        })
+  const newPerson = new PersonModel({
+    name: body.name,
+    number: body.number
+  })
 
-        newPerson
-          .save()
-          .then(savedPerson => savedPerson.toJSON())
-          .then(jsonPerson => res.json(jsonPerson))
-          .catch(err => next(err))
-      }
-    })
+  newPerson
+    .save()
+    .then(savedPerson => savedPerson.toJSON())
+    .then(jsonPerson => res.json(jsonPerson))
+    .catch(err => next(err))
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
   PersonModel
     .findByIdAndRemove(req.params.id)
     .then(_ => res.status(204).end())
     .catch(err => next(err))
 })
 
-app.put('/api/persons/:id', (req, res) => {
+app.put('/api/persons/:id', (req, res, next) => {
   const body = req.body
   const person = {
     name: body.name,

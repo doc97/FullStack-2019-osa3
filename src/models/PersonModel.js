@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const validator = require('mongoose-unique-validator')
 
 mongoose.set('useFindAndModify', false)
 
@@ -6,7 +7,8 @@ const preparePersonModel = () => {
   const schema = new mongoose.Schema({
     name: {
       type: String,
-      required: true
+      required: true,
+      unique: true
     },
     number: {
       type: String,
@@ -20,6 +22,7 @@ const preparePersonModel = () => {
       delete returnedObject.__v
     }
   })
+  schema.plugin(validator)
 
   return new mongoose.model('Person', schema)
 }
