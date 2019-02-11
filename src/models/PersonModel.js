@@ -10,20 +10,20 @@ const preparePersonModel = () => {
       type: String,
       minlength: 3,
       required: true,
-      unique: true
+      unique: true,
     },
     number: {
       type: String,
       minlength: 8,
-      required: true
-    }
+      required: true,
+    },
   })
   schema.set('toJSON', {
-    transform: (document, returnedObject) => {
-      returnedObject.id = returnedObject._id.toString(),
-      delete returnedObject._id
-      delete returnedObject.__v
-    }
+    transform: (document, returnedObjectModified) => {
+      returnedObjectModified.id = returnedObjectModified._id.toString()
+      delete returnedObjectModified._id
+      delete returnedObjectModified.__v
+    },
   })
   schema.plugin(validator)
 
@@ -40,7 +40,7 @@ const connectToDB = (username, password) => {
   console.log('connecting to MongoDB...')
   mongoose
     .connect(url, { useNewUrlParser: true })
-    .then(result => console.log('connected to MongoDB.'))
+    .then(_ => console.log('connected to MongoDB.'))
     .catch(err => console.log(`${err.name}: ${err.errmsg}`))
 }
 

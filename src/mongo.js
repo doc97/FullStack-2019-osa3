@@ -2,8 +2,7 @@ const mongoose = require('mongoose')
 require('dotenv').config()
 
 const printCommandSyntax = () => {
-  const msg =
-`command syntax: node mongo.js [<name> <number>]
+  const msg = `command syntax: node mongo.js [<name> <number>]
 
   Specify:
     DB_TYPE     - mongodb
@@ -16,12 +15,13 @@ const printCommandSyntax = () => {
   console.log(msg)
 }
 
-const preparePersonModel = () => {
-  return new mongoose.model('Person', new mongoose.Schema({
+const preparePersonModel = () => new mongoose.model(
+  'Person',
+  new mongoose.Schema({
     name: String,
-    number: String
-  }))
-}
+    number: String,
+  }),
+)
 
 const connectToDB = (username, password) => {
   const dbtype = process.env.DB_TYPE
@@ -33,12 +33,12 @@ const connectToDB = (username, password) => {
   console.log('connecting to MongoDB...')
   mongoose
     .connect(url, { useNewUrlParser: true })
-    .then(result => console.log('connected to MongoDB.'))
+    .then(_ => console.log('connected to MongoDB.'))
     .catch(err => console.log(`${err.name}: ${err.errmsg}`))
 }
 
 const listAll = (Model) => {
-  Model.find({}).then(result => {
+  Model.find({}).then((result) => {
     result.forEach(elem => console.log(`${elem.name}:\t${elem.number}`))
     mongoose.connection.close()
   })
@@ -46,10 +46,10 @@ const listAll = (Model) => {
 
 const addPerson = (Model, name, number) => {
   const person = new Model({
-    name: name,
-    number: number
+    name,
+    number,
   })
-  person.save().then(result => {
+  person.save().then((_) => {
     console.log('person added!')
     mongoose.connection.close()
   })
@@ -69,8 +69,8 @@ const main = () => {
     process.exit(1)
   }
 
-  const operationList = name === undefined 
-  
+  const operationList = name === undefined
+
   const Person = preparePersonModel()
   connectToDB(username, password)
 

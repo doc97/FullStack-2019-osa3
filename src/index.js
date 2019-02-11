@@ -1,18 +1,17 @@
 if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
+  require('dotenv').config() // eslint-disable-line global-require
 }
 
 const express = require('express')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
+
 const app = express()
 const PersonModel = require('./models/PersonModel')
 
 /* Morgan configuration */
-morgan.token('body', (req, res) => {
-  return JSON.stringify(req.body)
-})
+morgan.token('body', (req, _) => JSON.stringify(req.body))
 
 /* Middleware */
 app.use(bodyParser.json())
@@ -26,8 +25,8 @@ app.use(morgan(
     ':res[content-length]',
     '-',
     ':response-time ms',
-    ':body'
-  ].join(' ')
+    ':body',
+  ].join(' '),
 ))
 
 /* Routes */
@@ -36,7 +35,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/info', (req, res) => {
-  PersonModel.find({}).then(persons => {
+  PersonModel.find({}).then((persons) => {
     const html = `<p>Puhelinluettelossa ${persons.length} henkilön tiedot</p>
     <p>${new Date()}</p>`
     res.send(html)
@@ -44,7 +43,7 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-  PersonModel.find({}).then(persons => {
+  PersonModel.find({}).then((persons) => {
     res.json(persons.map(p => p.toJSON()))
   })
 })
@@ -52,7 +51,7 @@ app.get('/api/persons', (req, res) => {
 app.get('/api/persons/:id', (req, res, next) => {
   PersonModel
     .findById(req.params.id)
-    .then(person => {
+    .then((person) => {
       if (person) {
         res.json(person.toJSON())
       } else {
@@ -63,11 +62,11 @@ app.get('/api/persons/:id', (req, res, next) => {
 })
 
 app.post('/api/persons', (req, res, next) => {
-  const body = req.body
+  const { body } = req
 
   const newPerson = new PersonModel({
     name: body.name,
-    number: body.number
+    number: body.number,
   })
 
   newPerson
@@ -85,15 +84,15 @@ app.delete('/api/persons/:id', (req, res, next) => {
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
-  const body = req.body
+  const { body } = req
   const person = {
     name: body.name,
-    number: body.number
+    number: body.number,
   }
 
   PersonModel
     .findByIdAndUpdate(req.params.id, person, { new: true })
-    .then(updatedPerson => {
+    .then((updatedPerson) => {
       res.json(updatedPerson.toJSON())
     })
     .catch(err => next(err))
@@ -107,13 +106,14 @@ const unknownEndpoint = (req, res) => {
 const errorHandler = (err, req, res, next) => {
   console.log(err.message)
 
-  if (err.name === 'CastError' && err.kind == 'ObjectId') {
+  if (err.name === 'CastError' && err.kind === 'ObjectId') {
     return res.status(400).send({ error: 'malformed id' })
-  } else if (err.name === 'ValidationError') {
+  }
+  if (err.name === 'ValidationError') {
     return res.status(400).json({ error: err.message })
   }
 
-  next(err)
+  return next(err)
 }
 
 app.use(unknownEndpoint)
